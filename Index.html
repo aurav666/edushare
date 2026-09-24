@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>EduShare — Teaching Notes & Study Material</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Serif+Devanagari:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1a1a2e;
+    --ink-light: #3d3d5c;
+    --ink-muted: #6b6b8a;
+    --page: #f7f6f2;
+    --surface: #ffffff;
+    --accent: #2563a8;
+    --accent-light: #dbeafe;
+    --accent-dark: #1e4d8c;
+    --saffron: #d4520a;
+    --saffron-light: #fff3e8;
+    --green: #157a4a;
+    --green-light: #e8f5ee;
+    --border: rgba(26,26,46,0.12);
+    --radius: 10px;
+    --font-body: 'Noto Sans Devanagari', sans-serif;
+    --font-display: 'Noto Serif Devanagari', serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--page);
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+  }
+
+  .nav-logo {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: -0.3px;
+  }
+
+  .nav-logo span { color: var(--saffron); }
+
+  .nav-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--page);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    width: 220px;
+    transition: border-color 0.15s;
+  }
+
+  .nav-search:focus-within { border-color: var(--accent); }
+
+  .nav-search input {
+    border: none;
+    background: transparent;
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--ink);
+    outline: none;
+    width: 100%;
+  }
+
+  .nav-search input::placeholder { color: var(--ink-muted); }
+
+  .search-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--ink-muted);
+    flex-shrink: 0;
+  }
+
+  /* HERO */
+  .hero {
+    padding: 3rem 1.25rem 2.5rem;
+    text-align: center;
+    background: linear-gradient(180deg, #eef4fd 0%, var(--page) 100%);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--saffron);
+    margin-bottom: 0.75rem;
+  }
+
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(1.7rem, 6vw, 2.6rem);
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.25;
+    margin-bottom: 0.75rem;
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero p {
+    font-size: 14px;
+    color: var(--ink-light);
+    max-width: 380px;
+    margin: 0 auto 1.75rem;
+  }
+
+  /* MAIN SEARCH */
+  .main-search {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: var(--surface);
+    border: 1.5px solid var(--accent);
+    border-radius: 10px;
+    overflow: hidden;
+    max-width: 440px;
+    margin: 0 auto 1rem;
+    box-shadow: 0 2px 12px rgba(37,99,168,0.12);
+  }
+
+  .main-search input {
+    flex: 1;
+    border: none;
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--ink);
+    padding: 12px 14px;
+    outline: none;
+    background: transparent;
+  }
+
+  .main-search input::placeholder { color: var(--ink-muted); }
+
+  .main-search button {
+    background: var(--accent);
+    border: none;
+    color: white;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 12px 18px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+  }
+
+  .main-search button:hover { background: var(--accent-dark); }
+
+  .hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+  }
+
+  .tag {
+    font-size: 12px;
+    color: var(--accent);
+    background: var(--accent-light);
+    border-radius: 20px;
+    padding: 3px 10px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border: none;
+    font-family: var(--font-body);
+  }
+
+  .tag:hover { background: #bfdbfe; }
+
+  /* STATS */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stat {
+    background: var(--surface);
+    padding: 1rem 0.5rem;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent);
+    display: block;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--ink-muted);
+    display: block;
+    margin-top: 2px;
+  }
+
+  /* SECTIONS */
+  main { padding: 1.5rem 1.25rem 3rem; }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--accent-light);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-title .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 2.5rem;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    cursor: pointer;
+  }
+
+  .card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 2px 10px rgba(37,99,168,0.1);
+  }
+
+  .card-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    margin-bottom: 2px;
+  }
+
+  .card-icon.blue { background: var(--accent-light); }
+  .card-icon.orange { background: var(--saffron-light); }
+  .card-icon.green { background: var(--green-light); }
+  .card-icon.purple { background: #f3e8ff; }
+
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+
+  .card-sub {
+    font-size: 11px;
+    color: var(--ink-muted);
+    line-height: 1.4;
+  }
+
+  .card-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 20px;
+    width: fit-content;
+    margin-top: 2px;
+  }
+
+  .badge-blue { background: var(--accent-light); color: var(--accent-dark); }
+  .badge-orange { background: var(--saffron-light); color: var(--saffron); }
+  .badge-green { background: var(--green-light); color: var(--green); }
+  .badge-purple { background: #f3e8ff; color: #7c3aed; }
+
+  /* WIDE CARD */
+  .card-wide {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .card-wide .card-icon { flex-shrink: 0; }
+  .card-wide .card-body { flex: 1; }
+
+  /* SEARCH RESULTS */
+  #search-results {
+    display: none;
+    margin-bottom: 2rem;
+  }
+
+  #search-results.active { display: block; }
+
+  .result-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.875rem 1rem;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+
+  .result-item:hover { border-color: var(--accent); }
+
+  .result-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+
+  .result-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+
+  .result-sub { font-size: 11px; color: var(--ink-muted); }
+
+  .no-results {
+    text-align: center;
+    color: var(--ink-muted);
+    font-size: 13px;
+    padding: 2rem;
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--ink);
+    color: rgba(255,255,255,0.7);
+    text-align: center;
+    padding: 1.5rem 1.25rem;
+    font-size: 12px;
+  }
+
+  footer strong { color: white; }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,26,46,0.5);
+    z-index: 200;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .modal-overlay.active { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border-radius: 16px 16px 0 0;
+    width: 100%;
+    max-width: 600px;
+    padding: 1.5rem 1.25rem 2rem;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  .modal-handle {
+    width: 36px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 0 auto 1.25rem;
+  }
+
+  .modal-title {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.75rem;
+  }
+
+  .modal-desc {
+    font-size: 13px;
+    color: var(--ink-light);
+    margin-bottom: 1.25rem;
+    line-height: 1.6;
+  }
+
+  .subject-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .subject-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--page);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .subject-item:hover { background: var(--accent-light); color: var(--accent-dark); }
+
+  .modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1.25rem;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: var(--ink-muted);
+    cursor: pointer;
+    padding: 4px;
+  }
+
+  .coming-soon {
+    background: var(--page);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .coming-soon p {
+    font-size: 12px;
+    color: var(--ink-muted);
+    margin-top: 4px;
+  }
+
+  .coming-soon strong {
+    font-size: 14px;
+    color: var(--ink-light);
+  }
+
+  @media (max-width: 360px) {
+    .cards { grid-template-columns: 1fr; }
+    .card-wide { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<script>
+const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+if (tg) {
+  tg.ready();
+  tg.expand();
+  if (tg.colorScheme === 'dark') {
+    document.documentElement.style.setProperty('--page', '#0f0f1a');
+    document.documentElement.style.setProperty('--surface', '#1a1a2e');
+    document.documentElement.style.setProperty('--ink', '#e2e8f0');
+    document.documentElement.style.setProperty('--ink-light', '#94a3b8');
+    document.documentElement.style.setProperty('--ink-muted', '#64748b');
+    document.documentElement.style.setProperty('--border', 'rgba(255,255,255,0.08)');
+  }
+}
+</script>
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">Edu<span>Share</span></a>
+  <div class="nav-search">
+    <svg class="search-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
+      <circle cx="9" cy="9" r="5.5"/><path d="M14 14l3 3"/>
+    </svg>
+    <input type="text" id="nav-search-input" placeholder="खोजें..." autocomplete="off">
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <p class="hero-eyebrow">Teaching Notes & Study Material — Free Download</p>
+  <h1>EduShare — शिक्षकों का अपना मंच</h1>
+  <p>BA, MA, BA BEd, BSc BEd, HTET, CTET, NET JRF, UPSC — सभी के Notes, Papers और Syllabus एक जगह। मुफ्त Download।</p>
+  <div class="main-search">
+    <input type="text" id="hero-search-input" placeholder="Notes, Subject या Exam खोजें..." autocomplete="off">
+    <button onclick="doSearch()">खोजें</button>
+  </div>
+  <div class="hero-tags">
+    <button class="tag" onclick="setSearch('BA BEd')">BA BEd</button>
+    <button class="tag" onclick="setSearch('BSc BEd')">BSc BEd</button>
+    <button class="tag" onclick="setSearch('BA')">BA</button>
+    <button class="tag" onclick="setSearch('MA')">MA</button>
+    <button class="tag" onclick="setSearch('HTET')">HTET</button>
+    <button class="tag" onclick="setSearch('CTET')">CTET</button>
+    <button class="tag" onclick="setSearch('NET JRF')">NET JRF</button>
+    <button class="tag" onclick="setSearch('UPSC')">UPSC</button>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat">
+    <span class="stat-num">1000+</span>
+    <span class="stat-label">Notes PDFs</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num">20+</span>
+    <span class="stat-label">Exams Covered</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num">100%</span>
+    <span class="stat-label">Free Download</span>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<main>
+
+  <!-- SEARCH RESULTS -->
+  <div id="search-results">
+    <div class="section-title"><span class="dot"></span><span id="search-heading">खोज परिणाम</span></div>
+    <div id="result-list"></div>
+  </div>
+
+  <!-- OLD QUESTION PAPERS -->
+  <p class="section-title"><span class="dot"></span>पुराने प्रश्नपत्र</p>
+  <div class="cards">
+    <div class="card" onclick="openModal('ba-bed-qp')">
+      <div class="card-icon blue">📄</div>
+      <div class="card-title">BA BEd प्रश्नपत्र</div>
+      <div class="card-sub">2018–2024 तक के सभी वर्षों के पेपर</div>
+      <div class="card-badge badge-blue">Year-wise</div>
+    </div>
+    <div class="card" onclick="openModal('bsc-bed-qp')">
+      <div class="card-icon orange">📄</div>
+      <div class="card-title">BSc BEd प्रश्नपत्र</div>
+      <div class="card-sub">Science stream के सभी विषय</div>
+      <div class="card-badge badge-orange">Year-wise</div>
+    </div>
+  </div>
+
+  <!-- SYLLABUS -->
+  <p class="section-title"><span class="dot"></span>सम्पूर्ण पाठ्यक्रम</p>
+  <div class="cards">
+    <div class="card" onclick="openModal('ba-bed-syllabus')">
+      <div class="card-icon blue">📚</div>
+      <div class="card-title">BA BEd Syllabus</div>
+      <div class="card-sub">चारों साल का पूरा सिलेबस</div>
+      <div class="card-badge badge-blue">Semester-wise</div>
+    </div>
+    <div class="card" onclick="openModal('bsc-bed-syllabus')">
+      <div class="card-icon green">📚</div>
+      <div class="card-title">BSc BEd Syllabus</div>
+      <div class="card-sub">Science + Education विषय</div>
+      <div class="card-badge badge-green">Semester-wise</div>
+    </div>
+  </div>
+
+  <!-- NCERT -->
+  <p class="section-title"><span class="dot"></span>NCERT किताबें</p>
+  <div class="cards">
+    <div class="card card-wide" onclick="openModal('ncert-primary')">
+      <div class="card-icon blue">📖</div>
+      <div class="card-body">
+        <div class="card-title">कक्षा 1–5 (Primary)</div>
+        <div class="card-sub">हिंदी, अंग्रेजी, गणित, पर्यावरण</div>
+        <div class="card-badge badge-blue">20 किताबें</div>
+      </div>
+    </div>
+    <div class="card card-wide" onclick="openModal('ncert-middle')">
+      <div class="card-icon orange">📖</div>
+      <div class="card-body">
+        <div class="card-title">कक्षा 6–8 (Middle)</div>
+        <div class="card-sub">सभी विषय — Science, Maths, SST</div>
+        <div class="card-badge badge-orange">36 किताबें</div>
+      </div>
+    </div>
+    <div class="card card-wide" onclick="openModal('ncert-secondary')">
+      <div class="card-icon green">📖</div>
+      <div class="card-body">
+        <div class="card-title">कक्षा 9–10 (Secondary)</div>
+        <div class="card-sub">Board परीक्षा के लिए</div>
+        <div class="card-badge badge-green">40 किताबें</div>
+      </div>
+    </div>
+    <div class="card card-wide" onclick="openModal('ncert-senior')">
+      <div class="card-icon purple">📖</div>
+      <div class="card-body">
+        <div class="card-title">कक्षा 11–12 (Senior)</div>
+        <div class="card-sub">Physics, Chemistry, Bio, History, Eco...</div>
+        <div class="card-badge badge-purple">50 किताबें</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UG / PG COURSES -->
+  <p class="section-title"><span class="dot"></span>UG / PG Courses</p>
+  <div class="cards">
+    <div class="card" onclick="openModal('ba')">
+      <div class="card-icon blue">🎓</div>
+      <div class="card-title">BA Notes</div>
+      <div class="card-sub">Hindi, History, Poli. Sci, Geography, Sanskrit</div>
+      <div class="card-badge badge-blue">Year-wise</div>
+    </div>
+    <div class="card" onclick="openModal('ma')">
+      <div class="card-icon purple">🎓</div>
+      <div class="card-title">MA Notes</div>
+      <div class="card-sub">Hindi, English, History, Education</div>
+      <div class="card-badge badge-purple">Semester-wise</div>
+    </div>
+  </div>
+
+  <!-- COMPETITIVE EXAMS -->
+  <p class="section-title"><span class="dot"></span>प्रतियोगी परीक्षा नोट्स</p>
+  <div class="cards">
+    <div class="card" onclick="openModal('htet')">
+      <div class="card-icon orange">📝</div>
+      <div class="card-title">HTET</div>
+      <div class="card-sub">Level 1, 2, 3 — CDP, Subject, Language</div>
+      <div class="card-badge badge-orange">Level-wise</div>
+    </div>
+    <div class="card" onclick="openModal('ctet')">
+      <div class="card-icon green">📝</div>
+      <div class="card-title">CTET</div>
+      <div class="card-sub">Paper 1 & 2 — CDP, Language, Subject</div>
+      <div class="card-badge badge-green">Paper-wise</div>
+    </div>
+    <div class="card" onclick="openModal('net-jrf')">
+      <div class="card-icon purple">📝</div>
+      <div class="card-title">NET / JRF</div>
+      <div class="card-sub">UGC NET — Paper 1 + Subject Paper 2</div>
+      <div class="card-badge badge-purple">Subject-wise</div>
+    </div>
+    <div class="card" onclick="openModal('upsc')">
+      <div class="card-icon orange">🎯</div>
+      <div class="card-title">UPSC / IAS</div>
+      <div class="card-sub">GS Paper 1,2,3,4 — Prelims + Mains</div>
+      <div class="card-badge badge-orange">Subject-wise</div>
+    </div>
+    <div class="card" onclick="openModal('ssc')">
+      <div class="card-icon blue">🎯</div>
+      <div class="card-title">SSC CGL / CHSL</div>
+      <div class="card-sub">Quant, Reasoning, English, GK</div>
+      <div class="card-badge badge-blue">Topic-wise</div>
+    </div>
+    <div class="card" onclick="openModal('railway')">
+      <div class="card-icon purple">🎯</div>
+      <div class="card-title">Railway / RRB</div>
+      <div class="card-sub">NTPC, Group D, ALP — सभी</div>
+      <div class="card-badge badge-purple">Exam-wise</div>
+    </div>
+  </div>
+
+  <!-- COMING SOON -->
+  <div class="coming-soon">
+    <strong>🚀 जल्द आ रहा है</strong>
+    <p>Video lectures, Mock tests, और Daily current affairs — अगले update में।</p>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <strong>EduShare</strong> — Teaching Notes & Study Material, Free Forever
+  <br>
+  <span style="font-size:11px; margin-top:4px; display:block;">© 2024 — सभी सामग्री शैक्षिक उद्देश्य के लिए</span>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOnBg(event)">
+  <div class="modal" style="position:relative;">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<script>
+const data = {
+  'ba-bed-qp': {
+    icon: '📄',
+    title: 'BA BEd — पुराने प्रश्नपत्र',
+    desc: 'सभी वर्षों और सेमेस्टर के question papers। PDF format में download करें।',
+    items: ['2024 — Semester 1 & 2','2023 — Semester 3 & 4','2022 — Semester 5 & 6','2021 — Semester 7 & 8','2020 — All Semesters','2019 — All Semesters','2018 — All Semesters','हिंदी साहित्य — Special Papers','शिक्षाशास्त्र — Pedagogy Papers']
+  },
+  'bsc-bed-qp': {
+    icon: '📄',
+    title: 'BSc BEd — पुराने प्रश्नपत्र',
+    desc: 'Science stream के सभी प्रश्नपत्र — Physics, Chemistry, Biology, Math।',
+    items: ['Physics — 2018 to 2024','Chemistry — 2018 to 2024','Biology — 2018 to 2024','Mathematics — 2018 to 2024','Education Theory Papers','Practical Exam Papers']
+  },
+  'ba-bed-syllabus': {
+    icon: '📚',
+    title: 'BA BEd — सम्पूर्ण पाठ्यक्रम (8 Semesters)',
+    desc: 'चारों साल, आठों सेमेस्टर का पूरा official syllabus। हर paper listed।',
+    items: [
+      '── Semester 1 ──',
+      'Childhood and Growing Up (Education)',
+      'Contemporary India and Education (Education)',
+      'English (Compulsory)',
+      'Hindi / Modern Indian Language (Compulsory)',
+      'Elective Subject 1 — Paper I',
+      'Elective Subject 2 — Paper I',
+      'ICT Skill Development & Practicals',
+      '── Semester 2 ──',
+      'Learning and Teaching (Education)',
+      'Language Across the Curriculum (Education)',
+      'English (Compulsory)',
+      'Hindi / Modern Indian Language (Compulsory)',
+      'Elective Subject 1 — Paper II',
+      'Elective Subject 2 — Paper II',
+      'Drama and Art in Education (Practical)',
+      '── Semester 3 ──',
+      'Understanding Disciplines and Subjects (Education)',
+      'English (Compulsory)',
+      'Hindi / Modern Indian Language (Compulsory)',
+      'Elective Subject 1 — Paper III',
+      'Elective Subject 2 — Paper III',
+      'Health, Yoga and Physical Education',
+      '── Semester 4 ──',
+      'Assessment for Learning (Education)',
+      'English (Compulsory)',
+      'Hindi / Modern Indian Language (Compulsory)',
+      'Elective Subject 1 — Paper IV',
+      'Elective Subject 2 — Paper IV',
+      'Reflective Journal and School Simulation (Practical)',
+      '── Semester 5 ──',
+      'Knowledge and Curriculum (Education)',
+      'Pedagogy of School Subject 1 — Part I',
+      'English (Compulsory)',
+      'Hindi / Modern Indian Language (Compulsory)',
+      'Elective Subject 1 — Paper V',
+      'Elective Subject 2 — Paper V',
+      '── Semester 6 ──',
+      'Gender, School and Society (Education)',
+      'Pedagogy of School Subject 2 — Part I',
+      'English (Compulsory)',
+      'Hindi / Modern Indian Language (Compulsory)',
+      'Elective Subject 1 — Paper VI',
+      'Elective Subject 2 — Paper VI',
+      '── Semester 7 ──',
+      'Creating an Inclusive School (Education)',
+      'Pedagogy of School Subject 1 — Part II',
+      'Pedagogy of School Subject 2 — Part II',
+      'School Internship Program — Phase I (Teaching Practice)',
+      'Reading and Reflecting on Texts (Practical)',
+      '── Semester 8 ──',
+      'School Internship Program — Phase II (Block Teaching)',
+      'Understanding the Self (Practical)',
+      'Critical Understanding of ICT (Practical)'
+    ]
+  },
+  'bsc-bed-syllabus': {
+    icon: '📚',
+    title: 'BSc BEd — सम्पूर्ण पाठ्यक्रम',
+    desc: 'Science subjects और Education theory दोनों का detailed syllabus।',
+    items: ['Physics Syllabus — Year-wise','Chemistry Syllabus — Year-wise','Biology Syllabus — Year-wise','Mathematics Syllabus — Year-wise','Education Theory — 4 Years','Teaching Practice Guidelines','Internship Structure']
+  },
+  'ncert-primary': {
+    icon: '📖',
+    title: 'NCERT — कक्षा 1–5',
+    desc: 'Primary level की सभी NCERT किताबें — Hindi medium और English medium दोनों।',
+    items: ['Class 1 — Math Magic, Marigold','Class 2 — Math Magic, Raindrops','Class 3 — Math Magic, Marigold, EVS','Class 4 — Math Magic, Marigold, EVS','Class 5 — Math Magic, Marigold, EVS','हिंदी माध्यम — सभी कक्षाएं']
+  },
+  'ncert-middle': {
+    icon: '📖',
+    title: 'NCERT — कक्षा 6–8',
+    desc: 'Middle school की सभी किताबें — Science, Maths, SST, Hindi, English।',
+    items: ['Class 6 — Maths, Science, History, Geography, Civics','Class 7 — Maths, Science, History, Geography','Class 8 — Maths, Science, History, Geography','Hindi — Vasant, Durva, Bal Mahabharat','Sanskrit — Ruchira','English — Honeysuckle, It So Happened']
+  },
+  'ncert-secondary': {
+    icon: '📖',
+    title: 'NCERT — कक्षा 9–10',
+    desc: 'Board की तैयारी के लिए सभी NCERT किताबें।',
+    items: ['Class 9 — Maths (Ganit)','Class 9 — Science (Vigyan)','Class 9 — Social Science','Class 10 — Maths (Ganit)','Class 10 — Science (Vigyan)','Class 10 — Social Science','Hindi A & B — Sparsh, Sanchayan','English — Beehive, Moments']
+  },
+  'ncert-senior': {
+    icon: '📖',
+    title: 'NCERT — कक्षा 11–12',
+    desc: 'Senior secondary की सभी stream की किताबें।',
+    items: ['Physics Part 1 & 2 (11 & 12)','Chemistry Part 1 & 2 (11 & 12)','Biology (11 & 12)','Mathematics (11 & 12)','History — Themes in Indian History','Geography — India Physical Environment','Political Science','Economics — Statistics & Macro','Psychology','Sociology']
+  },
+  'ba': {
+    icon: '🎓',
+    title: 'BA — Graduation Notes',
+    desc: 'BA 1st, 2nd, 3rd Year के सभी subjects के handwritten और typed notes। PDF download।',
+    items: ['Hindi साहित्य — Year 1, 2, 3','English Literature — Year 1, 2, 3','History — Ancient, Medieval, Modern','Political Science — Year-wise','Geography — Physical & Human','Sanskrit — Year 1, 2, 3','Sociology Notes','Philosophy Notes','Economics Notes','Previous Year Question Papers']
+  },
+  'ma': {
+    icon: '🎓',
+    title: 'MA — Post Graduation Notes',
+    desc: 'MA Semester-wise notes — सभी major subjects के लिए।',
+    items: ['MA Hindi — Semester 1, 2, 3, 4','MA English — Semester 1, 2, 3, 4','MA History — Semester-wise','MA Education — All Semesters','MA Political Science','MA Geography','MA Sanskrit','MA Sociology','Dissertation Guidelines','Previous Year Papers']
+  },
+  'htet': {
+    icon: '📝',
+    title: 'HTET — Haryana TET Notes',
+    desc: 'HTET Level 1 (PRT), Level 2 (TGT), Level 3 (PGT) के complete notes।',
+    items: ['Child Development & Pedagogy (CDP)','Language 1 — Hindi','Language 2 — English / Sanskrit','Level 1 — EVS & Maths Pedagogy','Level 2 — Social Studies Pedagogy','Level 2 — Science Pedagogy','Level 2 — Maths Pedagogy','Level 3 — Subject Specific Notes','Previous Year Papers — 2016 to 2023','50-Day Study Plan']
+  },
+  'net-jrf': {
+    icon: '📝',
+    title: 'UGC NET / JRF Notes',
+    desc: 'Paper 1 (Teaching & Research Aptitude) और सभी Subject के Paper 2 notes।',
+    items: ['Paper 1 — Teaching Aptitude','Paper 1 — Research Methodology','Paper 1 — Logical Reasoning','Paper 1 — Reading Comprehension','Education — Paper 2 Complete','Hindi — Paper 2 Complete','History — Paper 2 Complete','Political Science — Paper 2','Geography — Paper 2','Previous Year Solved Papers']
+  },
+  'upsc': {
+    icon: '🎯',
+    title: 'UPSC / IAS नोट्स',
+    desc: 'Prelims और Mains दोनों के लिए comprehensive notes।',
+    items: ['History — Ancient, Medieval, Modern','Geography — Physical & Human','Polity — Indian Constitution','Economics — Basic & Advanced','Environment & Ecology','Science & Technology','Current Affairs — Monthly','Essay Writing Practice','Ethics — GS Paper 4','Previous Year Questions Analysis']
+  },
+  'ssc': {
+    icon: '🎯',
+    title: 'SSC CGL / CHSL नोट्स',
+    desc: 'Tier 1 और Tier 2 दोनों के लिए topic-wise notes।',
+    items: ['Quantitative Aptitude — Complete','Reasoning — Verbal & Non-verbal','English Grammar & Vocabulary','General Knowledge & GS','Previous Year Papers — 10 Years','Mock Test Series','Shortcut Tricks — Maths']
+  },
+  'ctet': {
+    icon: '🎯',
+    title: 'CTET / TET नोट्स',
+    desc: 'Paper 1 (Class 1–5) और Paper 2 (Class 6–8) दोनों के notes।',
+    items: ['Child Development & Pedagogy','Language 1 — Hindi','Language 2 — English','Mathematics Pedagogy','Environmental Studies Pedagogy','Social Studies Pedagogy','Science Pedagogy','Previous Year Questions','50-Day Study Plan']
+  },
+  'railway': {
+    icon: '🎯',
+    title: 'Railway / RRB नोट्स',
+    desc: 'NTPC, Group D, ALP — सभी exams के लिए notes।',
+    items: ['General Intelligence & Reasoning','Mathematics — Basic to Advanced','General Science','General Awareness','Technical Subjects — Electrician','Technical Subjects — Fitter','Previous Year Papers — RRB NTPC','Group D Practice Papers']
+  }
+};
+
+const allItems = [
+  { id:'ba-bed-qp', title:'BA BEd प्रश्नपत्र', sub:'2018–2024 तक के सभी पेपर', icon:'📄' },
+  { id:'bsc-bed-qp', title:'BSc BEd प्रश्नपत्र', sub:'Science stream papers', icon:'📄' },
+  { id:'ba-bed-syllabus', title:'BA BEd Syllabus', sub:'4 साल का पूरा पाठ्यक्रम', icon:'📚' },
+  { id:'bsc-bed-syllabus', title:'BSc BEd Syllabus', sub:'Science + Education syllabus', icon:'📚' },
+  { id:'ncert-primary', title:'NCERT Class 1–5', sub:'Primary level books', icon:'📖' },
+  { id:'ncert-middle', title:'NCERT Class 6–8', sub:'Middle school books', icon:'📖' },
+  { id:'ncert-secondary', title:'NCERT Class 9–10', sub:'Board exam books', icon:'📖' },
+  { id:'ncert-senior', title:'NCERT Class 11–12', sub:'Senior secondary books', icon:'📖' },
+  { id:'ba', title:'BA Notes', sub:'Hindi, History, Poli Sci, Geography, Sanskrit', icon:'🎓' },
+  { id:'ma', title:'MA Notes', sub:'Hindi, English, History, Education notes', icon:'🎓' },
+  { id:'htet', title:'HTET Notes', sub:'Level 1, 2, 3 complete notes', icon:'📝' },
+  { id:'ctet', title:'CTET Notes', sub:'Paper 1 & 2 notes', icon:'📝' },
+  { id:'net-jrf', title:'NET / JRF Notes', sub:'UGC NET Paper 1 + Subject notes', icon:'📝' },
+  { id:'upsc', title:'UPSC Notes', sub:'Prelims + Mains complete notes', icon:'🎯' },
+  { id:'ssc', title:'SSC Notes', sub:'CGL, CHSL, MTS notes', icon:'🎯' },
+  { id:'railway', title:'Railway Notes', sub:'NTPC, Group D, ALP notes', icon:'🎯' },
+];
+
+function doSearch() {
+  const q = (document.getElementById('hero-search-input').value || document.getElementById('nav-search-input').value).toLowerCase().trim();
+  showResults(q);
+}
+
+function setSearch(text) {
+  document.getElementById('hero-search-input').value = text;
+  document.getElementById('nav-search-input').value = text;
+  showResults(text.toLowerCase());
+}
+
+function showResults(q) {
+  const sec = document.getElementById('search-results');
+  const list = document.getElementById('result-list');
+  const heading = document.getElementById('search-heading');
+  if (!q) { sec.classList.remove('active'); return; }
+  const filtered = allItems.filter(i => i.title.toLowerCase().includes(q) || i.sub.toLowerCase().includes(q) || q.split(' ').some(w => i.title.toLowerCase().includes(w) || i.sub.toLowerCase().includes(w)));
+  heading.textContent = '"' + q + '" के लिए ' + filtered.length + ' परिणाम';
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="no-results">कोई परिणाम नहीं मिला। कोई दूसरा शब्द आज़माएं।</div>';
+  } else {
+    list.innerHTML = filtered.map(i => `<div class="result-item" onclick="openModal('${i.id}')"><div class="result-icon">${i.icon}</div><div><div class="result-title">${i.title}</div><div class="result-sub">${i.sub}</div></div></div>`).join('');
+  }
+  sec.classList.add('active');
+  sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+document.getElementById('hero-search-input').addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+document.getElementById('nav-search-input').addEventListener('input', e => {
+  document.getElementById('hero-search-input').value = e.target.value;
+  if (e.target.value.length > 1) showResults(e.target.value.toLowerCase());
+  else document.getElementById('search-results').classList.remove('active');
+});
+
+function openModal(id) {
+  const d = data[id];
+  if (!d) return;
+  document.getElementById('modal-content').innerHTML = `
+    <div style="font-size:2rem; margin-bottom:0.5rem;">${d.icon}</div>
+    <div class="modal-title">${d.title}</div>
+    <div class="modal-desc">${d.desc}</div>
+    <div class="subject-list">
+      ${d.items.map(item => item.startsWith('──') 
+        ? `<div style="font-size:11px;font-weight:700;letter-spacing:1px;color:var(--accent);background:var(--accent-light);padding:5px 10px;border-radius:6px;margin-top:8px;text-transform:uppercase;">${item.replace(/──/g,'').trim()}</div>`
+        : `<div class="subject-item">📌 ${item}</div>`
+      ).join('')}
+    </div>
+    <div style="margin-top:1rem; padding:0.75rem; background:var(--page); border-radius:8px; font-size:12px; color:var(--ink-muted); text-align:center;">
+      PDF links जल्द जोड़े जाएंगे। Google Drive से connect होगा।
+    </div>
+  `;
+  document.getElementById('modal-overlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function closeModalOnBg(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+
+if (tg) {
+  tg.BackButton.onClick(() => {
+    if (document.getElementById('modal-overlay').classList.contains('active')) {
+      closeModal();
+      tg.BackButton.hide();
+    }
+  });
+
+  const _origOpen = openModal;
+  window.openModal = function(id) {
+    _origOpen(id);
+    tg.BackButton.show();
+  };
+
+  const _origClose = closeModal;
+  window.closeModal = function() {
+    _origClose();
+    tg.BackButton.hide();
+  };
+
+  const user = tg.initDataUnsafe && tg.initDataUnsafe.user;
+  if (user && user.first_name) {
+    const eyebrow = document.querySelector('.hero-eyebrow');
+    if (eyebrow) eyebrow.textContent = 'नमस्ते ' + user.first_name + ' 👋 — Notes ready हैं';
+  }
+
+  const shareBtn = document.createElement('button');
+  shareBtn.textContent = '🔗 दोस्तों को Share करो';
+  shareBtn.style.cssText = 'display:block;width:calc(100% - 2.5rem);margin:0 1.25rem 1.5rem;padding:12px;background:var(--accent);color:white;border:none;border-radius:10px;font-family:var(--font-body);font-size:14px;font-weight:600;cursor:pointer;';
+  shareBtn.onclick = () => tg.switchInlineQuery('EduShare — Free Teaching Notes', ['users','groups','channels']);
+  const comingSoon = document.querySelector('.coming-soon');
+  if (comingSoon) comingSoon.after(shareBtn);
+}
+</script>
+</body>
+</html>
